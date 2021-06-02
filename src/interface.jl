@@ -1,11 +1,11 @@
 """
-    MOS interface struct. 
+MOS interface struct. 
 """
 mutable struct Interface
     url::String
     token::String
 
-    """
+    @doc """
         Interface(url, token)
 
     Create an interface to MOS at the given url and using
