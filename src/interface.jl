@@ -2,8 +2,21 @@ mutable struct Interface
     url::String
     token::String
 
+    """
+        Interface(url, token)
+
+    Create an interface to MOS at the given url and using
+    the given token for authentication.
+    """
     Interface(url::String, token::String) = new(url, token)
 
+    """
+        Interface(url)
+
+    Create an interface to MOS at the given url.
+    The authentication token is assumed to be available in the
+    environment variable MOS_BACKEND_TOKEN.
+    """
     function Interface(url::String)
         if haskey(ENV, "MOS_BACKEND_TOKEN")
             token = ENV["MOS_BACKEND_TOKEN"]
@@ -13,6 +26,14 @@ mutable struct Interface
         return Interface(url, token)
     end
 
+    """
+        Interface()
+
+    Create an interface to MOS
+    The url is constructed from the environment variables
+    MOS_BACKEND_HOST and MOS_BACKEND_HOST. The authentication token is
+    assumed to be available in the environment variable MOS_BACKEND_TOKEN.
+    """
     function Interface()
         host = ENV["MOS_BACKEND_HOST"]
         port = ENV["MOS_BACKEND_PORT"]
