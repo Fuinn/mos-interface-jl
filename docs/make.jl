@@ -17,4 +17,8 @@ makedocs(
     )
 )
 
+deploydocs(
+    repo = "github.com/Fuinn/mos-interface-jl.git",
+)
+
 
