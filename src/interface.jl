@@ -6,7 +6,7 @@ mutable struct Interface
     token::String
 
     @doc """
-        Interface(url, token)
+        Interface(url::String, token::String)
 
     Create an interface to MOS at the given url and using
     the given token for authentication.
@@ -14,11 +14,11 @@ mutable struct Interface
     Interface(url::String, token::String) = new(url, token)
 
     @doc """
-        Interface(url)
+        Interface(url::String)
 
     Create an interface to MOS at the given url.
     The authentication token is assumed to be available in the
-    environment variable MOS_BACKEND_TOKEN.
+    environment variable MOS\_BACKEND\_TOKEN.
     """
     function Interface(url::String)
         if haskey(ENV, "MOS_BACKEND_TOKEN")
@@ -34,8 +34,8 @@ mutable struct Interface
 
     Create an interface to MOS
     The url is constructed from the environment variables
-    MOS_BACKEND_HOST and MOS_BACKEND_HOST. The authentication token is
-    assumed to be available in the environment variable MOS_BACKEND_TOKEN.
+    MOS\_BACKEND\_HOST and MOS\_BACKEND\_HOST. The authentication token is
+    assumed to be available in the environment variable MOS\_BACKEND\_TOKEN.
     """
     function Interface()
         host = ENV["MOS_BACKEND_HOST"]
@@ -47,11 +47,11 @@ mutable struct Interface
 end
 
 """
-    new_model(i, filepath)
+    new_model(i::Interface, filepath::AbstractString)::Model
 
 Create new MOS model from local annotated file.
 """
-function new_model(i::Interface, filepath::AbstractString)
+function new_model(i::Interface, filepath::AbstractString)::Model
     url = join([i.url, "model/create_from_file/"])
     open(filepath, "r") do source_file
         f = HTTP.Form(Dict("source_file" => source_file))
@@ -65,7 +65,7 @@ function new_model(i::Interface, filepath::AbstractString)
 end 
 
 """
-    delete_model_with_name(i, name)
+    delete_model_with_name(i::Interface, name::String)
 
 Delete model with given name.
 """
@@ -90,7 +90,7 @@ function delete_model_with_name(i::Interface, name::String)
 end
 
 """
-    get_model(i, id)
+    get_model(i::Interface, id::Integer)::Model
 
 Get model with given id.
 """
@@ -105,7 +105,7 @@ function get_model(i::Interface, id::Integer)::Model
 end
 
 """
-    get_model_with_name(i, name)
+    get_model_with_name(i::Interface, name::String)::Model
 
 Get model with given name.
 """
