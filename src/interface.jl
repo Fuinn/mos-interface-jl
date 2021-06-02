@@ -13,7 +13,7 @@ mutable struct Interface
     """
     Interface(url::String, token::String) = new(url, token)
 
-    """
+    @doc """
         Interface(url)
 
     Create an interface to MOS at the given url.
@@ -29,7 +29,7 @@ mutable struct Interface
         return Interface(url, token)
     end
 
-    """
+    @doc """
         Interface()
 
     Create an interface to MOS
@@ -49,7 +49,7 @@ end
 """
     new_model(i, filepath)
 
-    Create new MOS model from local annocated file.
+Create new MOS model from local annotated file.
 """
 function new_model(i::Interface, filepath::AbstractString)
     url = join([i.url, "model/create_from_file/"])
@@ -64,6 +64,11 @@ function new_model(i::Interface, filepath::AbstractString)
     end
 end 
 
+"""
+    delete_model_with_name(i, name)
+
+Delete model with given name.
+"""
 function delete_model_with_name(i::Interface, name::String)
     url = join([i.url, "model/"])
     h = Dict()
@@ -84,6 +89,11 @@ function delete_model_with_name(i::Interface, name::String)
     end
 end
 
+"""
+    get_model(i, id)
+
+Get model with given id.
+"""
 function get_model(i::Interface, id::Integer)::Model
     url = join([i.url, "model/$id/"])
     h = Dict()
@@ -94,6 +104,11 @@ function get_model(i::Interface, id::Integer)::Model
     return Model(i, JSON.parse(String(r.body)))
 end
 
+"""
+    get_model_with_name(i, name)
+
+Get model with given name.
+"""
 function get_model_with_name(i::Interface, name::String)::Model
     url = join([i.url, "model/"])
     h = Dict()
