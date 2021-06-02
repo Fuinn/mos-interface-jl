@@ -1,3 +1,6 @@
+"""
+    MOS interface struct. 
+"""
 mutable struct Interface
     url::String
     token::String
@@ -43,6 +46,11 @@ mutable struct Interface
 
 end
 
+"""
+    new_model(i, filepath)
+
+    Create new MOS model from local annocated file.
+"""
 function new_model(i::Interface, filepath::AbstractString)
     url = join([i.url, "model/create_from_file/"])
     open(filepath, "r") do source_file
