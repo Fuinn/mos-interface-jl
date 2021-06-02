@@ -1,3 +1,6 @@
+"""
+MOS model struct.
+"""
 mutable struct Model
     interface::Interface
     data::Dict{String, <:Any}

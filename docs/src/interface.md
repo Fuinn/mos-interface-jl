@@ -1,9 +1,5 @@
 # Interface
 
-```@meta
-CurrentModule = MOSInterface
-```
-
 ```@docs
 Interface
 Interface()

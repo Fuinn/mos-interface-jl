@@ -1,5 +1,9 @@
 # Julia Interface of MOS
 
+```@meta
+CurrentModule = MOSInterface
+```
+
 This is the documentation for the Julia interface of MOS.
 
 MOS is a universal *Mathematical Optimization Service* that facilitates the deployment, integration, management and analysis of mathematical optimization models.
