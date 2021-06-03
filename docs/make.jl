@@ -3,7 +3,7 @@ push!(LOAD_PATH,"../src/")
 using Documenter, MOSInterface
 
 makedocs(
-    sitename="MOInterface", 
+    sitename="MOS Interface", 
     modules = [MOSInterface],   
     pages=[
         "Getting Started" => "index.md",
