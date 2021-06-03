@@ -1,6 +1,6 @@
 """
 MOS interface struct. 
-"""
+""" 
 mutable struct Interface
     url::String
     token::String

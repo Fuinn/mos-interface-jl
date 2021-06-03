@@ -26,7 +26,6 @@ function __add_function_states__(m::Model, func_states::Array{<:Any, 1})
     end
 end
 
-
 function __add_constraint_states__(m::Model, constr_states::Array{<:Any, 1})
     url = join([m.interface.url, "constraint-state/bulk_create/"])
     json_data = JSON.json(constr_states)
@@ -279,6 +278,11 @@ function __write__(m::Model, f::IO)
     write(f, recipe)
 end
 
+"""
+    delete_results(m::Model)
+
+Delete model results.
+"""
 function delete_results(m::Model)
     url = join([m.data["url"], "delete_results/"])(
     h = Dict())
@@ -289,6 +293,11 @@ function delete_results(m::Model)
     end
 end
 
+"""
+    set_interface_file(m::Model, name::AbstractString, filepath::AbstractString)
+
+Set interface file having a given name with data from a local file.
+"""
 function set_interface_file(m::Model, name::AbstractString, filepath::AbstractString)
     for f in __get_interface_files__(m)
         if f["name"] == name
@@ -299,6 +308,11 @@ function set_interface_file(m::Model, name::AbstractString, filepath::AbstractSt
     error("invalid file name")
 end
 
+"""
+    set_interface_object(m::Model, name::AbstractString, data::Any)
+
+Set interface object having a given name with JSON-serializable data.
+"""
 function set_interface_object(m::Model, name::AbstractString, data::Any)
     for f in __get_interface_objects__(m)
         if f["name"] == name
@@ -309,6 +323,11 @@ function set_interface_object(m::Model, name::AbstractString, data::Any)
     error("invalid file name")
 end
 
+"""
+    run(m::Model, blocking::Bool=true, poll_time::Number=1)
+
+Run optimization model.
+"""
 function run(m::Model, blocking::Bool=true, poll_time::Number=1)
     url = join([m.data["url"], "run/"])
     h = Dict()    
@@ -327,6 +346,11 @@ function run(m::Model, blocking::Bool=true, poll_time::Number=1)
     end
 end
 
+"""
+    reload(m::Model)
+
+Reload optimization model by pulling its latest data from MOS.
+"""
 function reload(m::Model)
     h = Dict()
     r = HTTP.get(correct_url(m.data["url"], m.interface.url), 
@@ -337,6 +361,11 @@ function reload(m::Model)
     m.data = JSON.parse(String(r.body))
 end
 
+"""
+    show_components(m::Model)
+
+Display model components.
+"""
 function show_components(m::Model)
 
     title = string("Model: ",m.data["name"])
@@ -385,32 +414,67 @@ function show_components(m::Model)
     end
 end
 
+"""
+    show_recipe(m::Model)
+
+Show model execution recipe.
+"""
 function show_recipe(m::Model)
     recipe = IOBuffer()
     __write__(m, recipe)
     println(String(take!(recipe)))
 end
 
+"""
+    get_id(m::Model)
+
+Get model id.
+"""
 function get_id(m::Model)
     return m.data["id"]
 end
 
+"""
+    get_owner_id(m::Model)
+
+Get model owner id.
+"""
 function get_owner_id(m::Model)
     return m.data["owner"]["id"]
 end
 
+"""
+    get_system(m::Model)
+
+Get model optimization modeling system.
+"""
 function get_system(m::Model)
     return m.data["system"]
 end
 
+"""
+    get_name(m::Model)
+
+Get model name.
+"""
 function get_name(m::Model)
     return m.data["name"]
 end
 
+"""
+    get_description(m::Model)
+
+Get model description.
+"""
 function get_description(m::Model)
     return m.data["description"]
 end
 
+"""
+    get_status(m::Model)
+
+Get model status.
+"""
 function get_status(m::Model)
 
     url = join([m.data["url"], "get_status/"])
@@ -426,6 +490,3 @@ function get_status(m::Model)
 
     return status
 end
-
-
-            
