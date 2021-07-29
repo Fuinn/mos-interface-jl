@@ -122,6 +122,6 @@ function get_model_with_name(i::Interface, name::String)::Model
     elseif length(models) > 1
         error("More than one model found with name $name")
     else
-        return Model(i, models[1])
+        return Model(i, models)
     end
 end
