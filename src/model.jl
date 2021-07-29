@@ -299,7 +299,6 @@ end
 Set interface file having a given name with data from a local file.
 """
 function set_interface_file(m::Model, name::AbstractString, filepath::AbstractString)
-    println("I am setting interface file")
     for f in __get_interface_files__(m)
         if f["name"] == name
             __set_interface_file__(m, f, filepath)
