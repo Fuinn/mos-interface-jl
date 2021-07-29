@@ -117,7 +117,7 @@ function get_model_with_name(i::Interface, name::String)::Model
         error("unable to get model")
     end
     models = JSON.parse(String(r.body))
-    println(r)
+    println(r.body)
     if isempty(models)
         error("No model found with name $name")
     elseif length(models) > 1
