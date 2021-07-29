@@ -44,6 +44,7 @@ mutable struct Interface
             protocol = "https"
         else
             protocol = "http"
+        end
         url = "$protocol://$host:$port/api/"
         return Interface(url)
     end
