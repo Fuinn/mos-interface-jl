@@ -40,7 +40,11 @@ mutable struct Interface
     function Interface()
         host = ENV["MOS_BACKEND_HOST"]
         port = ENV["MOS_BACKEND_PORT"]
-        url = "http://$host:$port/api/"
+        if port == 443
+            protocol = "https"
+        else
+            protocol = "http"
+        url = "$protocol://$host:$port/api/"
         return Interface(url)
     end
 
