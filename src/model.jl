@@ -128,39 +128,39 @@ end
 
 
 function __get_solver__(m::Model)
-    return m.data["model"]["solver"]
+    return m.data["solver"]
 end
 
 function __get_problem__(m::Model)
-    return m.data["model"]["problem"]
+    return m.data["problem"]
 end
 
 function __get_variables__(m::Model)
-    return m.data["model"]["variables"]
+    return m.data["variables"]
 end
 
 function __get_functions__(m::Model)
-    return m.data["model"]["functions"]
+    return m.data["functions"]
 end
 
 function __get_constraints__(m::Model)
-    return m.data["model"]["constraints"]
+    return m.data["constraints"]
 end
 
 function __get_helper_objects__(m::Model)
-    return m.data["model"]["helper_objects"]
+    return m.data["helper_objects"]
 end
 
 function __get_interface_objects__(m::Model, type::Any=nothing)
-    return [o for o in m.data["model"]["interface_objects"] if type === nothing || o["type"] == type]
+    return [o for o in m.data["interface_objects"] if type === nothing || o["type"] == type]
 end
 
 function __get_interface_files__(m::Model, type::Any=nothing)
-    return [f for f in m.data["model"]["interface_files"] if type === nothing || f["type"] == type]
+    return [f for f in m.data["interface_files"] if type === nothing || f["type"] == type]
 end
 
 function __set_status__(m::Model, status::AbstractString)
-    url = join([m.data["model"]["url"], "set_status/"])
+    url = join([m.data["url"], "set_status/"])
     h = Dict("Content-Type" => "application/json")
     r = HTTP.put(correct_url(url, m.interface.url), 
                  add_auth!(h, m.interface.token),  
@@ -168,7 +168,7 @@ function __set_status__(m::Model, status::AbstractString)
     if r.status != 200
         error("unable to set model status")
     end
-    m.data["model"]["status"] = status
+    m.data["status"] = status
 end
 
 function __set_var_type_and_shape__(m::Model, 
@@ -256,18 +256,18 @@ function __set_helper_object__(m::Model, o::Dict{<:AbstractString, <:Any}, data:
 end
 
 function __set_execution_log__(m::Model, log::AbstractString)
-    url = join([m.data["model"]["url"], "set_execution_log/"])
+    url = join([m.data["url"], "set_execution_log/"])
     url = correct_url(url, m.interface.url)
     h = Dict("Content-Type" => "application/json")
     r = HTTP.put(url, add_auth!(h, m.interface.token), body=JSON.json(log))
     if r.status != 200
         error("unable to set execution log")
     end 
-    m.data["model"]["execution_log"] = log
+    m.data["execution_log"] = log
 end
 
 function __write__(m::Model, f::IO)
-    url = join([m.data["model"]["url"], "write/"])
+    url = join([m.data["url"], "write/"])
     h = Dict()
     r = HTTP.get(correct_url(url, m.interface.url), 
                  add_auth!(h, m.interface.token))
@@ -284,7 +284,7 @@ end
 Delete model results.
 """
 function delete_results(m::Model)
-    url = join([m.data["model"]["url"], "delete_results/"])(
+    url = join([m.data["url"], "delete_results/"])(
     h = Dict())
     r = HTTP.post(correct_url(url, m.interface.url),
                   add_auth!(h, m.interface.token))
@@ -330,7 +330,7 @@ end
 Run optimization model.
 """
 function run(m::Model, blocking::Bool=true, poll_time::Number=1)
-    url = join([m.data["model"]["url"], "run/"])
+    url = join([m.data["url"], "run/"])
     h = Dict()    
     r = HTTP.post(correct_url(url, m.interface.url), 
                   add_auth!(h, m.interface.token))
@@ -354,7 +354,7 @@ Reload optimization model by pulling its latest data from MOS.
 """
 function reload(m::Model)
     h = Dict()
-    r = HTTP.get(correct_url(m.data["model"]["url"], m.interface.url), 
+    r = HTTP.get(correct_url(m.data["url"], m.interface.url), 
                  add_auth!(h, m.interface.token))
     if r.status != 200
         error("unable to reload model")
@@ -369,7 +369,7 @@ Display model components.
 """
 function show_components(m::Model)
 
-    title = string("Model: ",m.data["model"]["name"])
+    title = string("Model: ",m.data["name"])
 
     println("")
     println(title)
@@ -432,7 +432,7 @@ end
 Get model id.
 """
 function get_id(m::Model)
-    return m.data["model"]["id"]
+    return m.data["id"]
 end
 
 """
@@ -441,7 +441,7 @@ end
 Get model owner id.
 """
 function get_owner_id(m::Model)
-    return m.data["model"]["owner"]["id"]
+    return m.data["owner"]["id"]
 end
 
 """
@@ -450,7 +450,7 @@ end
 Get model optimization modeling system.
 """
 function get_system(m::Model)
-    return m.data["model"]["system"]
+    return m.data["system"]
 end
 
 """
@@ -459,7 +459,7 @@ end
 Get model name.
 """
 function get_name(m::Model)
-    return m.data["model"]["name"]
+    return m.data["name"]
 end
 
 """
@@ -468,7 +468,7 @@ end
 Get model description.
 """
 function get_description(m::Model)
-    return m.data["model"]["description"]
+    return m.data["description"]
 end
 
 """
@@ -478,7 +478,7 @@ Get model status.
 """
 function get_status(m::Model)
 
-    url = join([m.data["model"]["url"], "get_status/"])
+    url = join([m.data["url"], "get_status/"])
     h = Dict()
     r = HTTP.get(correct_url(url, m.interface.url), 
                  add_auth!(h, m.interface.token))
@@ -487,7 +487,7 @@ function get_status(m::Model)
     end
     
     status = JSON.parse(String(r.body))
-    m.data["model"]["status"] = status
+    m.data["status"] = status
 
     return status
 end
