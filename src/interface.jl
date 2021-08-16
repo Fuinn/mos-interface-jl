@@ -40,7 +40,7 @@ mutable struct Interface
     function Interface()
         host = ENV["MOS_BACKEND_HOST"]
         port = ENV["MOS_BACKEND_PORT"]
-        if port == 443
+        if port == "443"
             protocol = "https"
         else
             protocol = "http"
