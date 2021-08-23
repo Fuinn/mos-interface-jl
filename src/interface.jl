@@ -38,14 +38,18 @@ mutable struct Interface
     assumed to be available in the environment variable `MOS_BACKEND_TOKEN`.
     """
     function Interface()
-        host = ENV["MOS_BACKEND_HOST"]
-        port = ENV["MOS_BACKEND_PORT"]
-        if port == "443"
-            protocol = "https"
+        if haskey(ENV, "MOS_BACKEND_HOST") && haskey(ENV, "MOS_BACKEND_PORT")
+            host = ENV["MOS_BACKEND_HOST"]
+            port = ENV["MOS_BACKEND_PORT"]
+            if port == "443"
+              protocol = "https"
+            else
+              protocol = "http"
+            end
+            url = "$protocol://$host:$port/api/"
         else
-            protocol = "http"
+            url = "https://mos.fuinn.ie:443/api/"
         end
-        url = "$protocol://$host:$port/api/"
         return Interface(url)
     end
 
