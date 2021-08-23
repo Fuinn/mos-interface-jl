@@ -12,7 +12,8 @@ MOS is a universal *Mathematical Optimization Service* that facilitates the depl
 
 ```
 import Pkg
-Pkg.add("MOSInterface")
+using Pkg
+Pkg.add(PackageSpec(url="https://github.com/Fuinn/mos-interface-jl/"))
 ```
 
 ## Authentication
