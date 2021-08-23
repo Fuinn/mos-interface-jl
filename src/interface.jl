@@ -41,7 +41,12 @@ mutable struct Interface
         if haskey(ENV, "MOS_BACKEND_HOST") && haskey(ENV, "MOS_BACKEND_PORT")
             host = ENV["MOS_BACKEND_HOST"]
             port = ENV["MOS_BACKEND_PORT"]
-            url = "http://$host:$port/api/"
+            if port == "443"
+              protocol = "https"
+            else
+              protocol = "http"
+            end
+            url = "$protocol://$host:$port/api/"
         else
             url = "https://mos.fuinn.ie:443/api/"
         end
@@ -126,6 +131,8 @@ function get_model_with_name(i::Interface, name::String)::Model
     elseif length(models) > 1
         error("More than one model found with name $name")
     else
-        return Model(i, models[1])
+        m = Model(i, models[1])
+        id = m.data["id"]
+        return get_model(i, id)
     end
 end
