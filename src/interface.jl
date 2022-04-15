@@ -136,3 +136,22 @@ function get_model_with_name(i::Interface, name::String)::Model
         return get_model(i, id)
     end
 end
+
+function get_user_token(i::Interface, usr::String, pwd::String)
+    url = join([i.url, "authenticate/"])
+    h = Dict("Content-Type" => "application/json")
+    credentials = Dict(
+        "username" => usr,
+        "password" => pwd
+    )
+    r = HTTP.post(url, h, body=JSON.json(credentials))
+    if r.status != 200
+        error("unable to get user token")
+    end
+    token::String = JSON.parse(String(r.body))["key"]
+    return token
+end
+
+function set_token!(i::Interface, token::String)
+    i.token = token
+end
