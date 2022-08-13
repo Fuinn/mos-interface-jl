@@ -48,7 +48,7 @@ mutable struct Interface
             end
             url = "$protocol://$host:$port/api/"
         else
-            url = "https://mos.fuinn.ie:443/api/"
+            url = "http://localhost:8000/api/"
         end
         return Interface(url)
     end
