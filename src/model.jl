@@ -444,6 +444,15 @@ function get_owner_id(m::Model)
 end
 
 """
+    get_execution_log(m::Model)
+
+Gets execution log
+"""
+function get_execution_log(m::Model)
+    return m.data["execution_log"]
+end
+
+"""
     get_system(m::Model)
 
 Get model optimization modeling system.
@@ -471,6 +480,16 @@ function get_description(m::Model)
 end
 
 """
+    get_source(m::Model)
+
+Get model source.
+"""
+function get_source(m::Model)
+    return m.data["source"]
+end
+
+
+"""
     get_status(m::Model)
 
 Get model status.
@@ -489,4 +508,25 @@ function get_status(m::Model)
     m.data["status"] = status
 
     return status
+end
+
+"""
+    get_interface_object(m::Model, name::AbstractString)
+
+Gets interface object of name
+"""
+function get_interface_object(m::Model, name::AbstractString)
+    for o in __get_interface_objects__(m)
+        if o["name"] == name
+            url = join(o['url'],"data")
+            h = Dict()
+            r = HTTP.get(correct_url(url, m.interface.url),
+                         add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get interface object")
+            end
+            return
+        end
+    end
+    error("invalid object name")
 end
