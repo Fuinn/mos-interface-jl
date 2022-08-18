@@ -530,3 +530,26 @@ function get_interface_object(m::Model, name::AbstractString)
     end
     error("invalid object name")
 end
+
+"""
+    get_variable_state(m::Model, name::AbstractString)
+
+Gets variable state of name
+"""
+function get_variable_state(m::Model, name::AbstractString)
+    variable_found = false
+    for v in __get_variables__(m)
+        if v["name"] == name
+            variable_found = true
+            url = v["url"]                    
+            h = Dict()
+            r = HTTP.get(correct_url(url, m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get variable state")
+            end
+            return JSON.parse(String(r.body))
+        end
+    end
+    error("invalid object name")
+end
