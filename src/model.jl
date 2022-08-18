@@ -518,14 +518,14 @@ Gets interface object of name
 function get_interface_object(m::Model, name::AbstractString)
     for o in __get_interface_objects__(m)
         if o["name"] == name
-            url = join(o['url'],"data")
+            url = join([o["url"],"data/"])
             h = Dict()
             r = HTTP.get(correct_url(url, m.interface.url),
                          add_auth!(h, m.interface.token))
             if r.status != 200
                 error("unable to get interface object")
             end
-            return
+            return JSON.parse(String(r.body))
         end
     end
     error("invalid object name")
