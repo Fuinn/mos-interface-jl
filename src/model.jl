@@ -444,6 +444,15 @@ function get_owner_id(m::Model)
 end
 
 """
+    get_execution_log(m::Model)
+
+Gets execution log
+"""
+function get_execution_log(m::Model)
+    return m.data["execution_log"]
+end
+
+"""
     get_system(m::Model)
 
 Get model optimization modeling system.
@@ -471,6 +480,16 @@ function get_description(m::Model)
 end
 
 """
+    get_source(m::Model)
+
+Get model source.
+"""
+function get_source(m::Model)
+    return m.data["source"]
+end
+
+
+"""
     get_status(m::Model)
 
 Get model status.
@@ -489,4 +508,206 @@ function get_status(m::Model)
     m.data["status"] = status
 
     return status
+end
+
+"""
+    get_interface_object(m::Model, name::AbstractString)
+
+Gets interface object of name
+"""
+function get_interface_object(m::Model, name::AbstractString)
+    for o in __get_interface_objects__(m)
+        if o["name"] == name
+            url = join([o["url"],"data/"])
+            h = Dict()
+            r = HTTP.get(correct_url(url, m.interface.url),
+                         add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get interface object")
+            end
+            return JSON.parse(String(r.body))
+        end
+    end
+    error("invalid object name")
+end
+
+"""
+    get_variable(m::Model, name::AbstractString)
+
+Gets variable of name
+"""
+function get_variable(m::Model, name::AbstractString)
+    variable_found = false
+    for v in __get_variables__(m)
+        if v["name"] == name
+            variable_found = true
+            url = v["url"]                    
+            h = Dict()
+            r = HTTP.get(correct_url(url, m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get variable")
+            end
+            return JSON.parse(String(r.body))
+        end
+    end
+    error("invalid object name")
+end
+"""
+    get_variable_value(m::Model, name::AbstractString)
+
+Gets value(s) variable of name
+"""
+function get_variable_value(m::Model, name::AbstractString)
+    variable_found = false
+    for v in __get_variables__(m)
+        if v["name"] == name
+            variable_found = true
+            variable = get_variable(m,name)
+            h = Dict()
+            r = HTTP.get(correct_url(variable["states"], m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get variable value")
+            end
+            q = JSON.parse(String(r.body))
+            var_value_dict = Dict()
+            if size(q)[1] == 1
+                return q[1]["value"]
+            else
+                for i in q
+                    if i["label"] == ""
+                        ikey = i["index"]
+                    else
+                        ikey = i["label"]
+                    end
+                    var_value_dict[ikey] = i["value"]
+                end
+            end
+            return var_value_dict
+                
+        end
+    end
+    error("invalid object name")
+end
+
+"""
+    get_function(m::Model, name::AbstractString)
+
+Gets function of name
+"""
+function get_function(m::Model, name::AbstractString)
+    function_found = false
+    for f in __get_functions__(m)
+        if f["name"] == name
+            function_found = true
+            url = f["url"]                    
+            h = Dict()
+            r = HTTP.get(correct_url(url, m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get function")
+            end
+            return JSON.parse(String(r.body))
+        end
+    end
+    error("invalid object name")
+end
+"""
+    get_function_value(m::Model, name::AbstractString)
+
+Gets value(s) of function of name
+"""
+function get_function_value(m::Model, name::AbstractString)
+    function_found = false
+    for f in __get_functions__(m)
+        if f["name"] == name
+            function_found = true
+            func = get_function(m,name)
+            h = Dict()
+            r = HTTP.get(correct_url(func["states"], m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get function value")
+            end
+            q = JSON.parse(String(r.body))
+            func_value_dict = Dict()
+            if size(q)[1] == 1
+                return q[1]["value"]
+            else
+                for i in q
+                    if i["label"] == ""
+                        ikey = i["index"]
+                    else
+                        ikey = i["label"]
+                    end
+                    func_value_dict[ikey] = i["value"]
+                end
+            end
+            return func_value_dict
+                
+        end
+    end
+    error("invalid object name")
+end
+
+
+"""
+    get_constraint(m::Model, name::AbstractString)
+
+Gets constraint of name
+"""
+function get_constraint(m::Model, name::AbstractString)
+    constraint_found = false
+    for c in __get_constraints__(m)
+        if c["name"] == name
+            constraint_found = true
+            url = c["url"]                    
+            h = Dict()
+            r = HTTP.get(correct_url(url, m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get constraint")
+            end
+            return JSON.parse(String(r.body))
+        end
+    end
+    error("invalid object name")
+end
+"""
+    get_constraint_dual(m::Model, name::AbstractString)
+
+Gets dual value(s) of constraint of name
+"""
+function get_constraint_dual(m::Model, name::AbstractString)
+    constraint_found = false
+    for c in __get_constraints__(m)
+        if c["name"] == name
+            constraint_found = true
+            constraint = get_constraint(m,name)
+            h = Dict()
+            r = HTTP.get(correct_url(constraint["states"], m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get constraint dual value")
+            end
+            q = JSON.parse(String(r.body))
+            constraint_value_dict = Dict()
+            if size(q)[1] == 1
+                return q[1]["dual"]
+            else
+                for i in q
+                    if i["label"] == ""
+                        ikey = i["index"]
+                    else
+                        ikey = i["label"]
+                    end
+                    constraint_value_dict[ikey] = i["dual"]
+                end
+            end
+            return constraint_value_dict
+                
+        end
+    end
+    error("invalid object name")
 end
