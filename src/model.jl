@@ -532,11 +532,11 @@ function get_interface_object(m::Model, name::AbstractString)
 end
 
 """
-    get_variable_state(m::Model, name::AbstractString)
+    get_variable(m::Model, name::AbstractString)
 
-Gets variable state of name
+Gets variable of name
 """
-function get_variable_state(m::Model, name::AbstractString)
+function get_variable(m::Model, name::AbstractString)
     variable_found = false
     for v in __get_variables__(m)
         if v["name"] == name
@@ -546,9 +546,46 @@ function get_variable_state(m::Model, name::AbstractString)
             r = HTTP.get(correct_url(url, m.interface.url),
                      add_auth!(h, m.interface.token))
             if r.status != 200
-                error("unable to get variable state")
+                error("unable to get variable")
             end
             return JSON.parse(String(r.body))
+        end
+    end
+    error("invalid object name")
+end
+"""
+    get_variable(m::Model, name::AbstractString)
+
+Gets variable of name
+"""
+function get_variable_value(m::Model, name::AbstractString)
+    variable_found = false
+    for v in __get_variables__(m)
+        if v["name"] == name
+            variable_found = true
+            variable = get_variable(m,name)
+            h = Dict()
+            r = HTTP.get(correct_url(variable["states"], m.interface.url),
+                     add_auth!(h, m.interface.token))
+            if r.status != 200
+                error("unable to get variable value")
+            end
+            q = JSON.parse(String(r.body))
+            var_value_dict = Dict()
+            if size(q)[1] == 1
+                return q[1]["value"]
+            else
+                for i in q
+                    if i["label"] == ""
+                        ikey = i["index"]
+                    else
+                        ikey = i["label"]
+                    end
+                    var_value_dict[ikey] = i["value"]
+                end
+            end
+            return var_value_dict
+                
         end
     end
     error("invalid object name")
